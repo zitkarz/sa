@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="Учебный сайт по информатике для 8 класса: уроки, словарь, тренажёр и викторина.">
+	<title>Инфоразминка — информатика для 8 класса</title>
+	<link rel="icon" href="favicon.svg" type="image/svg+xml">
+	<style>
+		:root {
+			--ink: #20271f;
+			--muted: #73796e;
+			--paper: #f5f4ed;
+			--card: #fffefa;
+			--green: #58744e;
+			--green-dark: #3e5937;
+			--lime: #d7e8a4;
+			--line: #e4e6dc;
+			--red: #a6473e;
+			--shadow: 0 16px 42px rgba(39, 49, 34, .08);
+		}
+		* { box-sizing: border-box; }
+		html { scroll-behavior: smooth; }
+		body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Segoe UI", Arial, sans-serif; }
+		button { font: inherit; }
+		.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+		button:focus-visible, a:focus-visible { outline: 3px solid #d09343; outline-offset: 3px; }
+		.site-header { display: flex; align-items: center; justify-content: space-between; width: min(1120px, calc(100% - 40px)); margin: 0 auto; padding: 22px 0; }
+		.brand { display: flex; align-items: center; gap: 11px; color: var(--ink); font-weight: 750; letter-spacing: -.03em; text-decoration: none; }
+		.brand-mark { display: grid; width: 36px; height: 36px; place-items: center; border-radius: 12px; background: var(--green); color: white; font-size: 19px; }
+		.header-note { color: var(--muted); font-size: 13px; }
+		main { width: min(1040px, calc(100% - 40px)); margin: 0 auto; }
+		.intro { display: grid; grid-template-columns: 1.15fr .85fr; align-items: center; gap: 42px; padding: 48px 0 42px; }
+		.eyebrow { margin: 0 0 14px; color: var(--green); font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+		h1, h2, h3, p { margin-top: 0; }
+		h1 { max-width: 610px; margin-bottom: 18px; font-size: clamp(42px, 6vw, 68px); line-height: .99; letter-spacing: -.065em; }
+		.intro-copy { max-width: 510px; margin-bottom: 0; color: var(--muted); font-size: 16px; line-height: 1.7; }
+		.intro-note { padding: 25px 27px; border: 1px solid #e6e9db; border-radius: 18px; background: var(--lime); }
+		.intro-note strong { display: block; margin-bottom: 8px; font-size: 15px; }
+		.intro-note p { margin: 0; color: #4f5b43; font-size: 14px; line-height: 1.6; }
+		.workspace { display: grid; grid-template-columns: 250px minmax(0, 1fr); align-items: start; gap: 22px; padding-bottom: 60px; }
+		.sidebar, .quiz-card { border: 1px solid var(--line); border-radius: 18px; background: var(--card); box-shadow: var(--shadow); }
+		.sidebar { padding: 23px 20px; }
+		.sidebar h2 { margin-bottom: 18px; font-size: 16px; letter-spacing: -.03em; }
+		.topic-list { display: grid; gap: 8px; }
+		.topic-button { display: flex; width: 100%; align-items: center; gap: 10px; padding: 11px 12px; border: 1px solid transparent; border-radius: 11px; background: transparent; color: #555d51; text-align: left; cursor: pointer; transition: background .16s ease, border-color .16s ease; }
+		.topic-button:hover { background: #f4f6ee; }
+		.topic-button[aria-pressed="true"] { border-color: #d9e2cd; background: #edf2e6; color: var(--green-dark); font-weight: 700; }
+		.topic-icon { width: 22px; text-align: center; }
+		.difficulty-list { display: grid; gap: 8px; }
+		.difficulty-heading { margin: 22px 0 12px; font-size: 15px; letter-spacing: -.03em; }
+		.difficulty-list .topic-button { padding: 9px 12px; }
+		.difficulty-list .topic-button[aria-pressed="true"] { border-color: #d9e2cd; background: #edf2e6; color: var(--green-dark); }
+		.best-score { margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; line-height: 1.6; }
+		.best-score strong { color: var(--ink); }
+		.quiz-card { min-height: 440px; padding: clamp(22px, 4vw, 38px); }
+		.quiz-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--muted); font-size: 13px; }
+		.progress-track { height: 7px; margin: 14px 0 31px; overflow: hidden; border-radius: 10px; background: #eceee7; }
+		.progress-bar { width: 0; height: 100%; border-radius: inherit; background: var(--green); transition: width .25s ease; }
+		.question-tag { margin-bottom: 12px; color: var(--green); font-size: 12px; font-weight: 800; letter-spacing: .04em; }
+		.question-title { max-width: 660px; margin-bottom: 25px; font-size: clamp(22px, 3.2vw, 31px); line-height: 1.25; letter-spacing: -.04em; }
+		.answer-list { display: grid; gap: 10px; }
+		.answer-button { display: flex; width: 100%; align-items: center; gap: 13px; padding: 14px 15px; border: 1px solid var(--line); border-radius: 12px; background: white; color: var(--ink); text-align: left; cursor: pointer; transition: border-color .16s ease, background .16s ease, transform .16s ease; }
+		.answer-button:hover:not(:disabled) { transform: translateY(-1px); border-color: #9bab8c; background: #fbfcf8; }
+		.answer-button:disabled { cursor: default; }
+		.answer-key { display: grid; width: 29px; height: 29px; flex: 0 0 29px; place-items: center; border-radius: 9px; background: #f0f1eb; color: #687064; font-size: 12px; font-weight: 800; }
+		.answer-button.correct { border-color: #8ca681; background: #edf4e9; }
+		.answer-button.correct .answer-key { background: var(--green); color: white; }
+		.answer-button.incorrect { border-color: #d7a09a; background: #fbefed; }
+		.answer-button.incorrect .answer-key { background: var(--red); color: white; }
+		.feedback { min-height: 26px; margin: 16px 0 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
+		.feedback.good { color: var(--green-dark); }
+		.feedback.bad { color: var(--red); }
+		.quiz-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 22px; padding-top: 19px; border-top: 1px solid var(--line); }
+		.quiz-actions { display: flex; align-items: center; gap: 9px; }
+		.quiz-hint { margin: 0; color: var(--muted); font-size: 12px; }
+		.secondary-button { min-height: 44px; padding: 0 15px; border: 1px solid #dfe3d7; border-radius: 11px; background: #f7f8f3; color: var(--green-dark); font-weight: 700; cursor: pointer; transition: background .16s ease, border-color .16s ease; }
+		.secondary-button:hover { border-color: #9bab8c; background: #edf2e6; }
+		.primary-button { min-height: 44px; padding: 0 19px; border: 0; border-radius: 11px; background: var(--green); color: white; font-weight: 700; cursor: pointer; transition: background .16s ease, transform .16s ease; }
+		.primary-button:hover { transform: translateY(-1px); background: var(--green-dark); }
+		.primary-button:disabled { background: #aab1a3; cursor: not-allowed; transform: none; }
+		.start-content { padding: 45px 10px 24px; text-align: center; }
+		.start-icon { display: grid; width: 62px; height: 62px; margin: 0 auto 19px; place-items: center; border-radius: 19px; background: #edf2e6; font-size: 28px; }
+		.start-content h2 { margin-bottom: 10px; font-size: 27px; letter-spacing: -.05em; }
+		.start-content p { max-width: 380px; margin: 0 auto 22px; color: var(--muted); font-size: 14px; line-height: 1.65; }
+		.result-content { padding: 30px 8px 14px; text-align: center; }
+		.score-circle { display: grid; width: 110px; height: 110px; margin: 0 auto 20px; place-items: center; border: 7px solid #e4ebdb; border-radius: 50%; color: var(--green-dark); font-size: 29px; font-weight: 800; letter-spacing: -.06em; }
+		.result-content h2 { margin-bottom: 8px; font-size: 29px; letter-spacing: -.05em; }
+		.result-content p { margin-bottom: 23px; color: var(--muted); line-height: 1.6; }
+		.review { display: grid; gap: 8px; margin: 22px 0; text-align: left; }
+		.review-item { padding: 12px 14px; border-radius: 10px; background: #f3f5ef; color: #586052; font-size: 13px; line-height: 1.5; }
+		.review-item strong { color: var(--ink); }
+		.site-nav { position: sticky; z-index: 5; top: 0; display: flex; justify-content: center; gap: 5px; width: 100%; padding: 9px max(16px, calc((100% - 1120px) / 2)); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: rgba(245, 244, 237, .95); backdrop-filter: blur(12px); }
+		.site-nav a { padding: 9px 13px; border-radius: 9px; color: #555d51; font-size: 13px; font-weight: 650; text-decoration: none; white-space: nowrap; }
+		.site-nav a:hover { background: #e9eee2; color: var(--green-dark); }
+		.content-section { padding: 58px 0; scroll-margin-top: 75px; }
+		.section-heading { display: flex; align-items: end; justify-content: space-between; gap: 25px; margin-bottom: 24px; }
+		.section-heading h2 { margin-bottom: 0; font-size: clamp(29px, 4vw, 42px); letter-spacing: -.055em; }
+		.section-description { max-width: 430px; margin: 0; color: var(--muted); font-size: 14px; line-height: 1.65; }
+		.lesson-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+		.lesson-card, .info-card { padding: 22px; border: 1px solid var(--line); border-radius: 15px; background: var(--card); }
+		.lesson-number { display: inline-grid; width: 32px; height: 32px; margin-bottom: 19px; place-items: center; border-radius: 10px; background: #edf2e6; color: var(--green-dark); font-size: 12px; font-weight: 800; }
+		.lesson-card h3, .info-card h3 { margin-bottom: 9px; font-size: 18px; letter-spacing: -.035em; }
+		.lesson-card p, .info-card p { margin-bottom: 0; color: var(--muted); font-size: 13px; line-height: 1.7; }
+		.lesson-example { display: block; margin-top: 15px; padding: 10px 12px; border-radius: 9px; background: #f1f3ed; color: var(--green-dark); font-size: 12px; line-height: 1.5; }
+		.dictionary-tools { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
+		.dictionary-tools label { flex: 1; }
+		.dictionary-search, .trainer-input { width: 100%; min-height: 46px; padding: 0 14px; border: 1px solid #dfe3d7; border-radius: 11px; background: var(--card); color: var(--ink); font: inherit; }
+		.dictionary-search:focus, .trainer-input:focus { border-color: var(--green); outline: 3px solid rgba(88, 116, 78, .14); }
+		.dictionary-count { min-width: 90px; color: var(--muted); font-size: 12px; text-align: right; }
+		.term-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+		.term-card { padding: 16px 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+		.term-card h3 { margin-bottom: 5px; font-size: 15px; }
+		.term-card p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+		.no-results { grid-column: 1 / -1; margin: 0; padding: 20px; border: 1px dashed #cbd2c3; border-radius: 12px; color: var(--muted); font-size: 14px; text-align: center; }
+		.trainer-card { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; padding: 24px; border: 1px solid var(--line); border-radius: 16px; background: var(--card); }
+		.trainer-card h3 { margin-bottom: 8px; font-size: 17px; }
+		.trainer-card p { color: var(--muted); font-size: 13px; line-height: 1.6; }
+		.trainer-form { display: flex; align-items: center; gap: 9px; }
+		.trainer-form .trainer-input { min-width: 0; }
+		.trainer-output { min-height: 25px; margin: 11px 0 0 !important; color: var(--green-dark) !important; font-weight: 700; }
+		.binary-challenge { padding-top: 17px; border-top: 1px solid var(--line); }
+		.challenge-number { display: inline-block; margin-bottom: 12px; padding: 8px 11px; border-radius: 9px; background: #edf2e6; color: var(--green-dark); font: 700 16px Consolas, monospace; }
+		.security-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+		.security-grid .info-card { padding: 18px; }
+		.security-grid .info-card h3 { font-size: 15px; }
+		.project-box { padding: 25px; border-radius: 16px; background: #e9eee2; }
+		.project-box p { max-width: 780px; margin: 0; color: #56604f; font-size: 14px; line-height: 1.8; }
+		.quiz-page { padding-top: 38px; }
+		.quiz-page .workspace { padding-bottom: 0; }
+		.site-footer { padding: 18px 20px 30px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; text-align: center; }
+		.site-footer p { margin: 0; }
+		@media (max-width: 760px) {
+			.header-note { display: none; }
+			.intro { grid-template-columns: 1fr; gap: 22px; padding: 36px 0 28px; }
+			.intro-note { padding: 20px; }
+			.site-nav { justify-content: flex-start; overflow-x: auto; }
+			.content-section { padding: 42px 0; }
+			.section-heading { align-items: flex-start; flex-direction: column; gap: 9px; }
+			.workspace { grid-template-columns: 1fr; }
+			.sidebar { padding: 17px; }
+			.sidebar h2 { margin-bottom: 12px; }
+			.topic-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+			.topic-button { padding: 10px 8px; font-size: 13px; }
+			.best-score { margin-top: 14px; padding-top: 12px; }
+			.quiz-card { min-height: 420px; }
+			.lesson-grid { grid-template-columns: 1fr; }
+			.security-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+		}
+		@media (max-width: 420px) {
+			.site-header, main { width: min(100% - 28px, 1040px); }
+			.header-note { display: none; }
+			.topic-list { grid-template-columns: 1fr 1fr; }
+			.term-list, .trainer-card { grid-template-columns: 1fr; }
+			.dictionary-tools { align-items: flex-start; flex-direction: column; }
+			.dictionary-count { text-align: left; }
+			.trainer-form { align-items: stretch; flex-direction: column; }
+			.security-grid { grid-template-columns: 1fr 1fr; }
+			.quiz-footer { align-items: flex-start; flex-direction: column; }
+			.quiz-actions { width: 100%; }
+			.quiz-actions button { flex: 1; padding: 0 10px; }
+		}
+	</style>
+</head>
+<body>
+	<header class="site-header">
+		<a class="brand" href="#" aria-label="Инфоразминка — на главную"><span class="brand-mark" aria-hidden="true">&lt;/&gt;</span><span>Инфоразминка</span></a>
+		<span class="header-note">Информатика · 8 класс</span>
+	</header>
+	<nav class="site-nav" aria-label="Разделы сайта">
+		<a href="#lessons">Уроки</a>
+		<a href="#dictionary">Словарь</a>
+		<a href="#trainer">Тренажёр</a>
+		<a href="#safety">Безопасность</a>
+		<a href="#quiz">Викторина</a>
+		<a href="#project">О проекте</a>
+	</nav>
+	<main>
+		<section class="intro" aria-labelledby="page-title">
+			<div>
+				<p class="eyebrow">Учебный сайт · 8 класс</p>
+				<h1 id="page-title">Давайте<br>разберёмся.</h1>
+				<p class="intro-copy">Короткие объяснения, полезные термины и задания по информатике. Можно читать по порядку или сразу открыть тему, которая нужна.</p>
+			</div>
+			<aside class="intro-note">
+				<strong>Что внутри</strong>
+				<p>Мини-уроки, словарь, двоичный тренажёр, памятка по безопасности и викторина с разбором ответов.</p>
+			</aside>
+		</section>
+
+		<section class="content-section" id="lessons" aria-labelledby="lessons-title">
+			<div class="section-heading">
+				<div><p class="eyebrow">Коротко и по делу</p><h2 id="lessons-title">Мини-уроки</h2></div>
+				<p class="section-description">Несколько базовых идей из информатики — простыми словами и на знакомых примерах.</p>
+			</div>
+			<div class="lesson-grid">
+				<article class="lesson-card">
+					<span class="lesson-number">01</span>
+					<h3>Как компьютер хранит данные</h3>
+					<p>Компьютер представляет информацию с помощью нулей и единиц. Один разряд — бит, восемь бит составляют байт.</p>
+					<span class="lesson-example">Например: 1 байт = 8 бит.</span>
+				</article>
+				<article class="lesson-card">
+					<span class="lesson-number">02</span>
+					<h3>Файлы и программы</h3>
+					<p>Файл — данные с именем, которые хранятся на устройстве. Программа — набор команд, который компьютер выполняет.</p>
+					<span class="lesson-example">Например: фотография — файл, редактор фотографий — программа.</span>
+				</article>
+				<article class="lesson-card">
+					<span class="lesson-number">03</span>
+					<h3>Что такое алгоритм</h3>
+					<p>Алгоритм — точный порядок действий для решения задачи. Важно, чтобы команды были понятными и шли в нужной последовательности.</p>
+					<span class="lesson-example">Например: рецепт — алгоритм приготовления блюда.</span>
+				</article>
+			</div>
+		</section>
+
+		<section class="content-section" id="dictionary" aria-labelledby="dictionary-title">
+			<div class="section-heading">
+				<div><p class="eyebrow">Найди нужное слово</p><h2 id="dictionary-title">Словарь</h2></div>
+				<p class="section-description">Короткие определения основных терминов. Начните вводить слово или его часть.</p>
+			</div>
+			<div class="dictionary-tools">
+				<label><span class="sr-only">Поиск термина</span><input class="dictionary-search" id="dictionary-search" type="search" placeholder="Например, алгоритм" autocomplete="off"></label>
+				<span class="dictionary-count" id="dictionary-count" aria-live="polite"></span>
+			</div>
+			<div class="term-list" id="term-list"></div>
+		</section>
+
+		<section class="content-section" id="trainer" aria-labelledby="trainer-title">
+			<div class="section-heading">
+				<div><p class="eyebrow">Попробуйте сами</p><h2 id="trainer-title">Двоичный тренажёр</h2></div>
+				<p class="section-description">Числа в двоичной системе записываются только цифрами 0 и 1. Переведите число из одной системы в другую.</p>
+			</div>
+			<div class="trainer-card">
+				<div>
+					<h3>Из десятичной в двоичную</h3>
+					<p>Введите целое число от 0 до 255 — и увидите его запись в двоичной системе.</p>
+					<label><span class="sr-only">Десятичное число от 0 до 255</span><input class="trainer-input" id="decimal-input" type="number" min="0" max="255" step="1" placeholder="Например, 13"></label>
+					<p class="trainer-output" id="binary-output" aria-live="polite">Здесь появится ответ</p>
+				</div>
+				<div class="binary-challenge">
+					<h3>А теперь наоборот</h3>
+					<p>Сколько это число в десятичной системе?</p>
+					<span class="challenge-number" id="challenge-number">10110₂</span>
+					<form class="trainer-form" id="challenge-form">
+						<label class="sr-only" for="challenge-answer">Ваш ответ в десятичной системе</label>
+						<input class="trainer-input" id="challenge-answer" type="number" min="0" max="255" step="1" placeholder="Ваш ответ" required>
+						<button class="primary-button" type="submit">Проверить</button>
+					</form>
+					<p class="trainer-output" id="challenge-feedback" aria-live="polite"></p>
+					<button class="topic-button" id="new-challenge" type="button">Новое число ↻</button>
+				</div>
+			</div>
+		</section>
+
+		<section class="content-section" id="safety" aria-labelledby="safety-title">
+			<div class="section-heading">
+				<div><p class="eyebrow">Полезно помнить</p><h2 id="safety-title">Безопасность в сети</h2></div>
+				<p class="section-description">Несколько привычек, которые помогают бережнее обращаться с аккаунтами и личной информацией.</p>
+			</div>
+			<div class="security-grid">
+				<article class="info-card"><h3>Не делитесь паролями</h3><p>Создавайте отдельный пароль для важных аккаунтов. Не отправляйте его в сообщениях и не сообщайте незнакомым людям.</p></article>
+				<article class="info-card"><h3>Проверяйте ссылки</h3><p>Смотрите на адрес сайта и отправителя. Не открывайте неожиданные ссылки и файлы, если не уверены, кто их прислал.</p></article>
+				<article class="info-card"><h3>Берегите личные данные</h3><p>Не публикуйте адрес, номер телефона, пароли и другие сведения, по которым вас можно найти.</p></article>
+				<article class="info-card"><h3>Если что-то насторожило</h3><p>Не отвечайте и не отправляйте данные. Обратитесь к взрослому, которому доверяете, и вместе проверьте ситуацию.</p></article>
+			</div>
+		</section>
+
+		<section class="content-section quiz-page" id="quiz" aria-label="Викторина">
+			<div class="section-heading">
+				<div><p class="eyebrow">Давайте проверим себя</p><h2>Викторина</h2></div>
+				<p class="section-description">Выберите тему и уровень: начните с лёгкого, а когда будете готовы — переходите к среднему и сложному.</p>
+			</div>
+			<div class="workspace">
+				<aside class="sidebar">
+					<h2>Давайте выберем тему</h2>
+					<div class="topic-list" id="topic-list" role="group" aria-label="Темы викторины">
+						<button class="topic-button" type="button" data-topic="all" aria-pressed="true"><span class="topic-icon" aria-hidden="true">✦</span>Все темы</button>
+						<button class="topic-button" type="button" data-topic="number-systems" aria-pressed="false"><span class="topic-icon" aria-hidden="true">▤</span>Системы счисления</button>
+						<button class="topic-button" type="button" data-topic="algorithms" aria-pressed="false"><span class="topic-icon" aria-hidden="true">⌘</span>Алгоритмы</button>
+						<button class="topic-button" type="button" data-topic="programming" aria-pressed="false"><span class="topic-icon" aria-hidden="true">◈</span>Программирование</button>
+					</div>
+					<h3 class="difficulty-heading">Выберите сложность</h3>
+					<div class="difficulty-list" id="difficulty-list" role="group" aria-label="Сложность вопросов">
+						<button class="topic-button" type="button" data-difficulty="easy" aria-pressed="true">Лёгкий</button>
+						<button class="topic-button" type="button" data-difficulty="medium" aria-pressed="false">Средний</button>
+						<button class="topic-button" type="button" data-difficulty="hard" aria-pressed="false">Сложный</button>
+					</div>
+					<div class="best-score" id="best-score" aria-live="polite">Лучший результат: <strong>пока нет</strong></div>
+				</aside>
+				<div class="quiz-card" id="quiz-card" aria-live="polite"></div>
+			</div>
+		</section>
+
+		<section class="content-section" id="project" aria-labelledby="project-title">
+			<div class="section-heading">
+				<div><p class="eyebrow">Немного о работе</p><h2 id="project-title">Мой проект</h2></div>
+				<p class="section-description">Я собрал здесь материалы, с которыми самому было бы удобно повторять информатику.</p>
+			</div>
+			<div class="project-box">
+				<p>Я собрал в одном месте короткие объяснения, словарь терминов, тренажёр двоичной системы и викторину. Вопросы составлены по темам учебника «Информатика. 8 класс. Базовый уровень» Л. Л. Босовой и А. Ю. Босовой: системам счисления, алгоритмизации и программированию. Задания сформулированы своими словами.</p>
+			</div>
+		</section>
+	</main>
+	<footer class="site-footer">
+		<p>Учебный проект по информатике · 8 класс · Проект выполнен Ельчаниновым Александром под редакцией Теселкиной Неонилы Валериевны</p>
+	</footer>
+
+	<script>
+		const questions = [
+			{ topic: "number-systems", difficulty: "easy", question: "Какие цифры используются в двоичной системе счисления?", answers: ["0 и 1", "1 и 2", "От 0 до 9", "Только 1"], correct: 0, explanation: "В двоичной системе используются только две цифры: 0 и 1." },
+			{ topic: "number-systems", difficulty: "easy", question: "Сколько цифр используется в десятичной системе счисления?", answers: ["2", "8", "10", "16"], correct: 2, explanation: "В десятичной системе десять цифр: от 0 до 9." },
+			{ topic: "number-systems", difficulty: "easy", question: "Какое число записано в двоичной системе: 10₂?", answers: ["1", "2", "10", "3"], correct: 1, explanation: "В записи 10₂ цифра 1 стоит в разряде двоек: 1 × 2 + 0 × 1 = 2." },
+			{ topic: "number-systems", difficulty: "easy", question: "Чему равно число 100₂ в десятичной системе?", answers: ["2", "3", "4", "100"], correct: 2, explanation: "100₂ = 1 × 4 + 0 × 2 + 0 × 1 = 4." },
+			{ topic: "number-systems", difficulty: "easy", question: "Какие буквы могут использоваться в шестнадцатеричной системе?", answers: ["Только А и Б", "От А до F", "От К до Р", "Буквы не используются"], correct: 1, explanation: "В шестнадцатеричной системе после цифр 0–9 используют буквы A, B, C, D, E и F." },
+			{ topic: "algorithms", difficulty: "easy", question: "Что такое алгоритм?", answers: ["Понятная последовательность команд для решения задачи", "Название устройства", "Любой файл на компьютере", "Случайный набор чисел"], correct: 0, explanation: "Алгоритм задаёт точный порядок действий, который помогает решить задачу." },
+			{ topic: "algorithms", difficulty: "easy", question: "Кто или что выполняет команды алгоритма?", answers: ["Исполнитель", "Папка", "Расширение файла", "Разряд числа"], correct: 0, explanation: "Исполнитель — человек, устройство или программа, которые выполняют команды алгоритма." },
+			{ topic: "algorithms", difficulty: "easy", question: "Как называется алгоритм, в котором команды выполняются одна за другой без выбора и повторения?", answers: ["Линейный", "Циклический", "Разветвляющийся", "Случайный"], correct: 0, explanation: "В линейном алгоритме команды выполняются последовательно, одна за другой." },
+			{ topic: "algorithms", difficulty: "easy", question: "Для чего в алгоритме нужна команда «если»?", answers: ["Чтобы выбрать действие по условию", "Чтобы переименовать файл", "Чтобы измерить память", "Чтобы повторить все команды всегда"], correct: 0, explanation: "Условие позволяет алгоритму выбрать, какие команды выполнить в зависимости от ситуации." },
+			{ topic: "algorithms", difficulty: "easy", question: "Что делает цикл в алгоритме?", answers: ["Повторяет команды", "Удаляет все команды", "Меняет имя исполнителя", "Переводит число в другой алфавит"], correct: 0, explanation: "Цикл нужен, чтобы повторять одну или несколько команд." },
+			{ topic: "programming", difficulty: "easy", question: "Что такое программа?", answers: ["Последовательность команд для компьютера", "Часть клавиатуры", "Папка с бумагами", "Число в двоичной записи"], correct: 0, explanation: "Программа — это алгоритм, записанный на языке, который может выполнить компьютер." },
+			{ topic: "programming", difficulty: "easy", question: "Для чего нужна переменная в программе?", answers: ["Чтобы хранить значение, которое можно использовать", "Чтобы включать монитор", "Чтобы печатать на бумаге", "Чтобы заменять все команды"], correct: 0, explanation: "Переменная хранит значение, например число, которое программа использует в вычислениях." },
+			{ topic: "programming", difficulty: "easy", question: "Что обычно означает команда ввода данных?", answers: ["Программа получает значение", "Программа удаляет значение", "Компьютер выключается", "Результат печатается на экране"], correct: 0, explanation: "Ввод нужен, чтобы передать программе данные для дальнейшей обработки." },
+			{ topic: "programming", difficulty: "easy", question: "Зачем программе нужна команда вывода?", answers: ["Чтобы показать результат", "Чтобы ввести пароль вместо пользователя", "Чтобы создать клавиатуру", "Чтобы повторить ввод"], correct: 0, explanation: "Вывод позволяет показать пользователю результат работы программы." },
+			{ topic: "programming", difficulty: "easy", question: "Если x = 4, чему станет равно x после команды «прибавить к x число 3»?", answers: ["1", "4", "7", "12"], correct: 2, explanation: "К прежнему значению x прибавляем 3: 4 + 3 = 7." },
+			{ topic: "number-systems", difficulty: "medium", question: "Какое десятичное число записано двоичным числом 1101₂?", answers: ["11", "12", "13", "14"], correct: 2, explanation: "1101₂ = 1×8 + 1×4 + 0×2 + 1×1 = 13." },
+			{ topic: "number-systems", difficulty: "medium", question: "Как записать число 19 в двоичной системе?", answers: ["10011₂", "10101₂", "11001₂", "11100₂"], correct: 0, explanation: "19 = 16 + 2 + 1, значит в разрядах 16, 8, 4, 2, 1 получаем 1, 0, 0, 1, 1: это 10011₂." },
+			{ topic: "number-systems", difficulty: "medium", question: "Какое десятичное число соответствует записи 57₈?", answers: ["45", "46", "47", "57"], correct: 2, explanation: "57₈ = 5×8 + 7 = 47." },
+			{ topic: "number-systems", difficulty: "medium", question: "Какое десятичное число соответствует записи 2A₁₆? В шестнадцатеричной системе A = 10.", answers: ["32", "36", "42", "210"], correct: 2, explanation: "2A₁₆ = 2×16 + 10 = 42." },
+			{ topic: "number-systems", difficulty: "medium", question: "Чему равно 101₂ + 11₂? Ответ запишите в двоичной системе.", answers: ["110₂", "1000₂", "1010₂", "111₂"], correct: 1, explanation: "101₂ = 5₁₀ и 11₂ = 3₁₀. Сумма равна 8₁₀, то есть 1000₂." },
+			{ topic: "algorithms", difficulty: "medium", question: "Алгоритм присваивает x значение 3, а затем прибавляет к x число 4. Чему равно x?", answers: ["1", "7", "12", "34"], correct: 1, explanation: "Сначала x = 3. После команды прибавления получаем 3 + 4 = 7." },
+			{ topic: "algorithms", difficulty: "medium", question: "Условие алгоритма: «если число больше 10, прибавить 1, иначе вычесть 1». Что произойдёт с числом 8?", answers: ["К нему прибавят 1", "Из него вычтут 1", "Число не изменится", "Алгоритм повторит команду бесконечно"], correct: 1, explanation: "Число 8 не больше 10, поэтому выполняется ветка «иначе»: 8 − 1 = 7." },
+			{ topic: "algorithms", difficulty: "medium", question: "Сколько раз выполнится команда в цикле, который повторяется 4 раза?", answers: ["2", "3", "4", "5"], correct: 2, explanation: "Если указано повторить команду 4 раза, она будет выполнена четыре раза." },
+			{ topic: "algorithms", difficulty: "medium", question: "Как лучше поступить с большой задачей, которую трудно решить сразу?", answers: ["Разбить её на несколько более простых подзадач", "Случайно переставить команды", "Удалить условие задачи", "Повторять одну команду без остановки"], correct: 0, explanation: "Разбиение на подзадачи помогает решать большую задачу по частям и проверять каждый шаг." },
+			{ topic: "algorithms", difficulty: "medium", question: "Исполнитель умеет перемещаться по клеткам и поворачиваться. Что нужно задать, чтобы он прошёл маршрут?", answers: ["Точный порядок команд", "Название файла", "Размер экрана", "Цвет клавиатуры"], correct: 0, explanation: "Исполнителю нужно дать команды в правильном порядке, например шаги и повороты." },
+			{ topic: "programming", difficulty: "medium", question: "Вычислите выражение 10 + 2 × 3.", answers: ["36", "16", "30", "15"], correct: 1, explanation: "Сначала выполняется умножение: 2×3 = 6. Затем сложение: 10+6 = 16." },
+			{ topic: "programming", difficulty: "medium", question: "Программа присвоила a значение 5, b значение 2, а затем вычислила c = a + b. Чему равно c?", answers: ["3", "7", "10", "52"], correct: 1, explanation: "В выражении c = a + b складываем значения переменных: 5 + 2 = 7." },
+			{ topic: "programming", difficulty: "medium", question: "Переменная x равна 2. Программа три раза прибавляет к x число 2. Чему равно x?", answers: ["6", "7", "8", "10"], correct: 2, explanation: "Начинаем с 2 и трижды прибавляем 2: 2 → 4 → 6 → 8." },
+			{ topic: "programming", difficulty: "medium", question: "Что выведет программа, если сначала вычислит 7 − 3, а затем покажет результат?", answers: ["4", "10", "73", "21"], correct: 0, explanation: "Сначала вычисляем разность 7 − 3 = 4, затем команда вывода покажет число 4." },
+			{ topic: "programming", difficulty: "medium", question: "Переменная x равна 7. Верно ли условие «x больше 5»?", answers: ["Да", "Нет", "Условие нельзя проверить", "Только после сложения"], correct: 0, explanation: "7 больше 5, поэтому условие истинно." },
+			{ topic: "number-systems", difficulty: "hard", question: "Какое десятичное число записано двоичным числом 11101₂?", answers: ["27", "28", "29", "30"], correct: 2, explanation: "11101₂ = 16 + 8 + 4 + 0 + 1 = 29." },
+			{ topic: "number-systems", difficulty: "hard", question: "Как записать число 45 в двоичной системе?", answers: ["101011₂", "101101₂", "110101₂", "111001₂"], correct: 1, explanation: "45 = 32 + 8 + 4 + 1, поэтому двоичная запись — 101101₂." },
+			{ topic: "number-systems", difficulty: "hard", question: "Чему равно произведение 12₈ × 3₈? Ответ запишите в восьмеричной системе.", answers: ["26₈", "34₈", "36₈", "46₈"], correct: 2, explanation: "12₈ = 10₁₀. Умножаем 10 на 3 и получаем 30₁₀. Число 30₁₀ в восьмеричной системе — 36₈." },
+			{ topic: "number-systems", difficulty: "hard", question: "Какое десятичное число соответствует записи 3F₁₆? В шестнадцатеричной системе F = 15.", answers: ["48", "60", "63", "315"], correct: 2, explanation: "3F₁₆ = 3×16 + 15 = 48 + 15 = 63." },
+			{ topic: "number-systems", difficulty: "hard", question: "Чему равно 1011₂ + 110₂? Ответ запишите в двоичной системе.", answers: ["10001₂", "1111₂", "10101₂", "11001₂"], correct: 0, explanation: "1011₂ = 11₁₀ и 110₂ = 6₁₀. Сумма равна 17₁₀, то есть 10001₂." },
+			{ topic: "algorithms", difficulty: "hard", question: "x равно 12. Если x больше 10, вычесть 3, иначе прибавить 3. Чему станет равно x?", answers: ["9", "12", "15", "Нельзя определить"], correct: 0, explanation: "12 больше 10, значит выполняется первая ветка: 12 − 3 = 9." },
+			{ topic: "algorithms", difficulty: "hard", question: "Алгоритм складывает числа от 1 до 4 включительно. Какой получится результат?", answers: ["8", "9", "10", "12"], correct: 2, explanation: "Складываем числа по порядку: 1 + 2 + 3 + 4 = 10." },
+			{ topic: "algorithms", difficulty: "hard", question: "В цикле 5 раз выполняется команда «прибавить к x число 3». Изначально x = 2. Чему равно x после цикла?", answers: ["15", "17", "18", "20"], correct: 1, explanation: "Пять раз прибавляем 3: x = 2 + 5×3 = 17." },
+			{ topic: "algorithms", difficulty: "hard", question: "Алгоритм проверяет число: если оно чётное, делит его на 2, иначе прибавляет 1. Что получится из числа 7?", answers: ["3", "4", "7", "8"], correct: 3, explanation: "7 — нечётное число, поэтому выполняется команда «прибавить 1»: получается 8." },
+			{ topic: "algorithms", difficulty: "hard", question: "Что важно проверить в цикле, который повторяется, пока условие истинно?", answers: ["Что условие когда-нибудь станет ложным", "Что в алгоритме нет переменных", "Что цикл не содержит команд", "Что исполнитель сменит имя"], correct: 0, explanation: "Если условие никогда не станет ложным, цикл может выполняться бесконечно." },
+			{ topic: "programming", difficulty: "hard", question: "Чему равно выражение (8 + 4) ÷ 2 × 3?", answers: ["6", "12", "18", "24"], correct: 2, explanation: "Сначала скобки: 8 + 4 = 12. Затем слева направо: 12 ÷ 2 = 6, 6 × 3 = 18." },
+			{ topic: "programming", difficulty: "hard", question: "a = 2, b = 5. Выполняются команды: a = a + b; b = a − b. Чему равны a и b?", answers: ["a = 7, b = 2", "a = 7, b = 5", "a = 5, b = 2", "a = 2, b = 7"], correct: 0, explanation: "После первой команды a = 2 + 5 = 7. Во второй команде b = 7 − 5 = 2." },
+			{ topic: "programming", difficulty: "hard", question: "x = 3. Затем выполняется команда x = 2 × (x + 4). Чему станет равно x?", answers: ["10", "11", "14", "16"], correct: 2, explanation: "Подставляем старое значение x: 2 × (3 + 4) = 2 × 7 = 14." },
+			{ topic: "programming", difficulty: "hard", question: "Чему равно выражение 2 × (5 + 3) − 4?", answers: ["10", "12", "16", "20"], correct: 1, explanation: "Сначала скобки: 5 + 3 = 8. Затем умножение: 2 × 8 = 16. Вычитаем 4 и получаем 12." },
+			{ topic: "programming", difficulty: "hard", question: "x равно 4. Программа повторяет два раза: x = x × 2. Чему равно x после выполнения цикла?", answers: ["8", "12", "16", "20"], correct: 2, explanation: "После первого повтора x = 4×2 = 8. После второго x = 8×2 = 16." }
+		];
+
+		const terms = [
+			{ term: "Алгоритм", definition: "Точная последовательность команд для решения задачи." },
+			{ term: "Байт", definition: "Единица измерения информации, равная восьми битам." },
+			{ term: "Бит", definition: "Наименьшая единица информации; может иметь значение 0 или 1." },
+			{ term: "Браузер", definition: "Программа для просмотра сайтов и работы в интернете." },
+			{ term: "Двоичная система счисления", definition: "Система записи чисел, в которой используются только цифры 0 и 1." },
+			{ term: "Операционная система", definition: "Главная программа устройства: управляет его работой и запускает другие программы." },
+			{ term: "Оперативная память", definition: "Память, в которой временно хранятся данные и программы во время работы компьютера." },
+			{ term: "Программа", definition: "Набор команд, который компьютер выполняет для решения задачи." },
+			{ term: "Файл", definition: "Именованный набор данных, сохранённый на устройстве." },
+			{ term: "Цикл", definition: "Часть алгоритма, в которой некоторые команды повторяются." }
+		];
+
+		const topicNames = {
+			all: "Все темы",
+			"number-systems": "Системы счисления",
+			algorithms: "Алгоритмы",
+			programming: "Программирование"
+		};
+		const difficultyNames = {
+			easy: "Лёгкий",
+			medium: "Средний",
+			hard: "Сложный"
+		};
+		const quizCard = document.querySelector("#quiz-card");
+		const topicButtons = [...document.querySelectorAll("#topic-list .topic-button")];
+		const difficultyButtons = [...document.querySelectorAll("#difficulty-list .topic-button")];
+		const bestScore = document.querySelector("#best-score");
+		let selectedTopic = "all";
+		let selectedDifficulty = "easy";
+		let roundQuestions = [];
+		let currentQuestion = 0;
+		let score = 0;
+		let answered = false;
+		let review = [];
+
+		function renderTerms(search = "") {
+			const query = search.trim().toLocaleLowerCase("ru-RU").replaceAll("ё", "е");
+			const matches = terms.filter(item => `${item.term} ${item.definition}`.toLocaleLowerCase("ru-RU").replaceAll("ё", "е").includes(query));
+			document.querySelector("#dictionary-count").textContent = `${matches.length} из ${terms.length} терминов`;
+			document.querySelector("#term-list").innerHTML = matches.length
+				? matches.map(item => `<article class="term-card"><h3>${item.term}</h3><p>${item.definition}</p></article>`).join("")
+				: '<p class="no-results">Ничего не найдено. Попробуйте другое слово.</p>';
+		}
+
+		function makeChallenge() {
+			const number = Math.floor(Math.random() * 27) + 5;
+			document.querySelector("#challenge-number").textContent = `${number.toString(2)}₂`;
+			document.querySelector("#challenge-number").dataset.answer = String(number);
+			document.querySelector("#challenge-answer").value = "";
+			document.querySelector("#challenge-feedback").textContent = "";
+		}
+
+		document.querySelector("#dictionary-search").addEventListener("input", event => renderTerms(event.target.value));
+		document.querySelector("#decimal-input").addEventListener("input", event => {
+			const input = event.target;
+			const output = document.querySelector("#binary-output");
+			if (input.value === "") {
+				output.textContent = "Здесь появится ответ";
+				return;
+			}
+			const number = input.valueAsNumber;
+			if (!Number.isInteger(number) || number < 0 || number > 255) {
+				output.textContent = "Введите целое число от 0 до 255.";
+				return;
+			}
+			output.textContent = `${number}₁₀ = ${number.toString(2)}₂`;
+		});
+		document.querySelector("#challenge-form").addEventListener("submit", event => {
+			event.preventDefault();
+			const answerInput = document.querySelector("#challenge-answer");
+			const answer = answerInput.valueAsNumber;
+			if (!Number.isInteger(answer) || answer < 0 || answer > 255) {
+				document.querySelector("#challenge-feedback").textContent = "Введите целое число от 0 до 255.";
+				return;
+			}
+			const expected = Number(document.querySelector("#challenge-number").dataset.answer);
+			document.querySelector("#challenge-feedback").textContent = answer === expected
+				? "Верно! Отлично получилось."
+				: `Пока неверно. ${document.querySelector("#challenge-number").textContent} = ${expected}₁₀.`;
+		});
+		document.querySelector("#new-challenge").addEventListener("click", makeChallenge);
+
+		function loadBestScore() {
+			try {
+				const saved = JSON.parse(localStorage.getItem("infoWarmupBest") || "{}");
+				const value = saved[`${selectedTopic}:${selectedDifficulty}`];
+				bestScore.innerHTML = `Лучший результат: <strong>${Number.isInteger(value) ? `${value} из 5` : "пока нет"}</strong>`;
+			} catch (error) {
+				bestScore.innerHTML = "Лучший результат: <strong>не удалось загрузить</strong>";
+				console.error("Не удалось прочитать лучший результат:", error);
+			}
+		}
+
+		function shuffle(items) {
+			const shuffled = [...items];
+			for (let index = shuffled.length - 1; index > 0; index -= 1) {
+				const otherIndex = Math.floor(Math.random() * (index + 1));
+				[shuffled[index], shuffled[otherIndex]] = [shuffled[otherIndex], shuffled[index]];
+			}
+			return shuffled;
+		}
+
+		function showStart() {
+			quizCard.innerHTML = `
+				<div class="start-content">
+					<div class="start-icon" aria-hidden="true">🧠</div>
+					<p class="eyebrow">${topicNames[selectedTopic]} · ${difficultyNames[selectedDifficulty]} уровень</p>
+					<h2>Готовы проверить себя?</h2>
+					<p>${selectedDifficulty === "easy" ? "Пять базовых вопросов, чтобы вспомнить основные понятия." : selectedDifficulty === "medium" ? "Пять вопросов на применение правил и небольшие вычисления." : "Пять задач посложнее: пригодятся внимательность и несколько шагов рассуждения."} После каждого ответа можно посмотреть объяснение.</p>
+					<button class="primary-button" type="button" id="start-button">Начать викторину</button>
+				</div>`;
+			document.querySelector("#start-button").addEventListener("click", startQuiz);
+		}
+
+		function startQuiz() {
+			const pool = questions.filter(item =>
+				item.difficulty === selectedDifficulty &&
+				(selectedTopic === "all" || item.topic === selectedTopic)
+			);
+			roundQuestions = shuffle(pool).slice(0, 5);
+			currentQuestion = 0;
+			score = 0;
+			answered = false;
+			review = [];
+			showQuestion();
+		}
+
+		function showQuestion() {
+			answered = false;
+			const item = roundQuestions[currentQuestion];
+			const letters = ["А", "Б", "В", "Г"];
+			quizCard.innerHTML = `
+				<div class="quiz-top"><span>Вопрос ${currentQuestion + 1} из ${roundQuestions.length}</span><span>Счёт: ${score}</span></div>
+				<div class="progress-track" role="progressbar" aria-label="Прогресс викторины" aria-valuemin="0" aria-valuemax="${roundQuestions.length}" aria-valuenow="${currentQuestion}">
+					<div class="progress-bar" style="width: ${currentQuestion / roundQuestions.length * 100}%"></div>
+				</div>
+				<div class="question-tag">${topicNames[item.topic]} · ${difficultyNames[item.difficulty]} уровень</div>
+				<h2 class="question-title">${item.question}</h2>
+				<div class="answer-list">${item.answers.map((answer, index) => `
+					<button class="answer-button" type="button" data-answer="${index}">
+						<span class="answer-key">${letters[index]}</span><span>${answer}</span>
+					</button>`).join("")}</div>
+				<p class="feedback" id="feedback" aria-live="polite"></p>
+				<div class="quiz-footer">
+					<p class="quiz-hint">Выберите один вариант ответа</p>
+					<div class="quiz-actions">
+						<button class="secondary-button" type="button" id="reveal-button">Показать ответ</button>
+						<button class="primary-button" type="button" id="next-button" disabled>${currentQuestion === roundQuestions.length - 1 ? "Посмотреть результат" : "Следующий вопрос"}</button>
+					</div>
+				</div>`;
+
+			document.querySelectorAll(".answer-button").forEach(button => button.addEventListener("click", () => chooseAnswer(Number(button.dataset.answer))));
+			document.querySelector("#reveal-button").addEventListener("click", () => revealAnswer());
+			document.querySelector("#next-button").addEventListener("click", () => {
+				if (!answered) return;
+				if (currentQuestion < roundQuestions.length - 1) {
+					currentQuestion += 1;
+					showQuestion();
+				} else {
+					showResult();
+				}
+			});
+		}
+
+		function chooseAnswer(choice) {
+			finishQuestion(choice, false);
+		}
+
+		function revealAnswer() {
+			finishQuestion(null, true);
+		}
+
+		function finishQuestion(choice, revealed) {
+			if (answered) return;
+			answered = true;
+			const item = roundQuestions[currentQuestion];
+			const correct = !revealed && choice === item.correct;
+			if (correct) score += 1;
+			review.push({ question: item.question, correct, revealed, answer: item.answers[item.correct], explanation: item.explanation });
+			document.querySelectorAll(".answer-button").forEach(button => {
+				const answerIndex = Number(button.dataset.answer);
+				button.disabled = true;
+				if (answerIndex === item.correct) button.classList.add("correct");
+				else if (!revealed && answerIndex === choice) button.classList.add("incorrect");
+			});
+			const feedback = document.querySelector("#feedback");
+			feedback.textContent = revealed
+				? `Правильный ответ: ${item.answers[item.correct]}. ${item.explanation}`
+				: `${correct ? "Верно!" : "Не совсем."} ${item.explanation}`;
+			feedback.classList.add(correct || revealed ? "good" : "bad");
+			document.querySelector(".quiz-top span:last-child").textContent = `Счёт: ${score}`;
+			document.querySelector("#next-button").disabled = false;
+			document.querySelector("#reveal-button").disabled = true;
+			document.querySelector(".quiz-hint").textContent = revealed
+				? "Ответ показан — балл за вопрос не начислен"
+				: "Ответ принят — можно переходить дальше";
+		}
+
+		function showResult() {
+			const percent = score / roundQuestions.length;
+			const title = percent === 1 ? "Отличный результат!" : percent >= .6 ? "Хорошая работа!" : "Есть что повторить!";
+			const message = percent === 1
+				? "Все ответы верные. Похоже, с этими темами вы уже разобрались."
+				: percent >= .6
+					? "Основы уже знакомы. Посмотрите разбор — он поможет закрепить детали."
+					: "Ошибаться нормально: загляните в пояснения и попробуйте ещё раз.";
+			quizCard.innerHTML = `
+				<div class="result-content">
+					<div class="score-circle" aria-label="Результат ${score} из ${roundQuestions.length}">${score}<span aria-hidden="true">/${roundQuestions.length}</span></div>
+					<p class="eyebrow">Раунд завершён · ${topicNames[selectedTopic]} · ${difficultyNames[selectedDifficulty]} уровень</p>
+					<h2>${title}</h2>
+					<p>${message}</p>
+					<div class="review" aria-label="Разбор ответов">${review.map((item, index) => `
+						<div class="review-item"><strong>${index + 1}. ${item.revealed ? "Ответ показан" : item.correct ? "Верно" : "Повторить"}:</strong> ${item.question}<br>Правильный ответ: ${item.answer}. ${item.explanation}</div>`).join("")}</div>
+					<button class="primary-button" type="button" id="retry-button">Попробуйте ещё раз</button>
+				</div>`;
+			document.querySelector("#retry-button").addEventListener("click", startQuiz);
+			saveBestScore();
+			loadBestScore();
+		}
+
+		function saveBestScore() {
+			try {
+				const saved = JSON.parse(localStorage.getItem("infoWarmupBest") || "{}");
+				const scoreKey = `${selectedTopic}:${selectedDifficulty}`;
+				saved[scoreKey] = Math.max(Number.isInteger(saved[scoreKey]) ? saved[scoreKey] : 0, score);
+				localStorage.setItem("infoWarmupBest", JSON.stringify(saved));
+			} catch (error) {
+				console.error("Не удалось сохранить лучший результат:", error);
+			}
+		}
+
+		topicButtons.forEach(button => button.addEventListener("click", () => {
+			selectedTopic = button.dataset.topic;
+			topicButtons.forEach(item => item.setAttribute("aria-pressed", String(item === button)));
+			loadBestScore();
+			showStart();
+		}));
+		difficultyButtons.forEach(button => button.addEventListener("click", () => {
+			selectedDifficulty = button.dataset.difficulty;
+			difficultyButtons.forEach(item => item.setAttribute("aria-pressed", String(item === button)));
+			loadBestScore();
+			showStart();
+		}));
+
+		renderTerms();
+		makeChallenge();
+		loadBestScore();
+		showStart();
+	</script>
+</body>
+</html>
